@@ -1,53 +1,17 @@
-import {
-  CopyObjectCommand,
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
 import 'dotenv/config';
 import sharp from 'sharp';
-import axios from 'axios';
 
-const region = process.env.AWS_REGION!;
-const bucketName = process.env.S3_BUCKET_NAME!;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY!;
-const accessKeyId = process.env.AWS_ACCESS_KEY!;
+const cloudinary = require('cloudinary').v2;
 
-const s3 = new S3Client({
-  region,
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 const FileService = {
-  async upload(file: Express.Multer.File, key: string) {
-    const command = new PutObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-    });
-    await s3.send(command);
-    return key;
-  },
-  async delete(key: string) {
-    const command = new DeleteObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-    });
-    await s3.send(command);
-  },
-  async rename(oldKey: string, newKey: string) {
-    const command = new CopyObjectCommand({
-      Bucket: bucketName,
-      CopySource: `${bucketName}/${oldKey}`,
-      Key: newKey,
-    });
-    await s3.send(command);
-    await this.delete(oldKey);
-    return newKey;
+  async upload(filePath: string) {
+    return await cloudinary.uploader.upload(filePath, { folder: 'next-ecommerce-app-images' });
   },
   compressImage(image: Buffer, size: number) {
     const builder = sharp(image);
@@ -59,14 +23,6 @@ const FileService = {
       quality: 80,
     });
     return builder.toBuffer();
-  },
-  async getImageBufferFromLink(url: string) {
-    try {
-      const response = await axios.get(url, { responseType: 'arraybuffer' });
-      return Buffer.from(response.data);
-    } catch (error) {
-      return null;
-    }
   },
 };
 

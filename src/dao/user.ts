@@ -3,15 +3,18 @@ import User from '../models/user';
 import { isValidObjectId } from 'mongoose';
 
 const UserDao = {
-  async create(
-    user: Omit<SignUpBody, 'password' | 'phone'> & {
-      googleId?: string;
-      facebookId?: string;
-      twitterId?: string;
-    }
-  ) {
+  async create(user: Omit<SignUpBody, 'password' | 'phone'>) {
     return User.create(user);
   },
+  // async create(
+  //   user: Omit<SignUpBody, 'password' | 'phone'> & {
+  //     googleId?: string;
+  //     facebookId?: string;
+  //     twitterId?: string;
+  //   }
+  // ) {
+  //   return User.create(user);
+  // },
   async getAll({ status, type, role, search, page = 1, limit = 20 }: any) {
     const params: any = {};
     if (status) params.status = status;
@@ -47,7 +50,7 @@ const UserDao = {
   },
   async getOne(args: any, options?: { returnPassword: boolean }) {
     if (args._id && !isValidObjectId(args._id)) return null;
-    const builder = User.findOne(args);
+    const builder = User.findOne(args).select('-_id -__v -createdAt -updatedAt');
     if (options?.returnPassword) builder.select('+password');
     return builder;
   },

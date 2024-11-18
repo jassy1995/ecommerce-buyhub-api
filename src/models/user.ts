@@ -1,20 +1,12 @@
 import mongoose from 'mongoose';
-import { UserRoles } from '../config/constants';
 import { comparePasswords, hashPassword } from '../helpers/auth';
 import logger from '../lib/logger';
 
 const schema = new mongoose.Schema(
   {
-    fullName: {
+    name: {
       type: String,
       required: true,
-      lowercase: true,
-      trim: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -41,15 +33,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    lastLogin: {
-      type: Date,
-      default: () => Date.now(),
-    },
-    role: {
-      type: String,
+    isAdmin: {
+      type: Boolean,
       required: true,
-      default: UserRoles.USER,
-      enum: [UserRoles.USER, UserRoles.ADMIN],
+      default: false,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -74,4 +61,3 @@ const User = mongoose.model<UserBaseDocument>('User', schema);
 User.syncIndexes().catch(e => logger.error(e));
 
 export default User;
-

@@ -1,23 +1,8 @@
 import UserDao from '../dao/user';
-import {
-  CreateUserBanBody,
-  CreateUserSuspensionBody,
-  SignUpBody,
-  UpdateUserBanBody,
-  UpdateUserSuspensionBody,
-} from '../schemas/auth';
-import FileService from './file';
-import { CreateWriterRequestBody, UpdateWriterRequestBody } from '../schemas/user';
+import { SignUpBody } from '../schemas/auth';
 
 const UserService = {
-  async create(
-    user: Omit<SignUpBody, 'password' | 'phone'> & {
-      googleId?: string;
-      facebookId?: string;
-      twitterId?: string;
-      verification?: boolean;
-    }
-  ) {
+  async create(user: Omit<SignUpBody, 'password' | 'phone'>) {
     return await UserDao.create(user);
   },
   async getAll(params: any) {
@@ -35,7 +20,7 @@ const UserService = {
   async delete(id: string) {
     const user = await UserDao.delete(id);
     if (!user) return null;
-    if (user.image) await FileService.delete(user.image);
+    // if (user.image) await FileService.delete(user.image);
     return user;
   },
 };

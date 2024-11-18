@@ -6,7 +6,7 @@ import logger from '../lib/logger';
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-  return res.json({ success: true, message: 'Welcome to Statisense API' });
+  return res.json({ success: true, message: 'Welcome to Buyhub API' });
 });
 
 router.use('/api/auth', auth);

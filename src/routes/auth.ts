@@ -3,17 +3,17 @@ import AuthController from '../controllers/auth';
 import validate from '../middlewares/validate';
 import {
   changePasswordSchema,
-  confirmOtpSchema,
+  // confirmOtpSchema,
   loginGoogleSchema,
   loginSchema,
-  resetPasswordSendSchema,
-  resetPasswordVerifySchema,
+  // resetPasswordSendSchema,
+  // resetPasswordVerifySchema,
   signUpSchema,
   updateProfileSchema,
 } from '../schemas/auth';
 import authenticate from '../middlewares/authenticate';
 import multer from 'multer';
-import rateLimit from 'express-rate-limit';
+// import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 
 const router = express.Router();
@@ -21,30 +21,8 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post(
-  '/signup/email',
-  rateLimit({
-    windowMs: 60 * 60 * 1000,
-    limit: 10,
-    message: 'Too many accounts created from this IP, please try again after an hour',
-    standardHeaders: true,
-    legacyHeaders: false,
-  }),
-  validate(signUpSchema),
-  AuthController.signup
-);
-router.post(
-  '/login/email',
-  rateLimit({
-    windowMs: 5 * 60 * 1000,
-    limit: 20,
-    message: 'Too many login attempts from this IP, please try again after 5 minutes',
-    standardHeaders: true,
-    legacyHeaders: false,
-  }),
-  validate(loginSchema),
-  AuthController.login
-);
+router.post('/signup/email', validate(signUpSchema), AuthController.signup);
+router.post('/login/email', validate(loginSchema), AuthController.login);
 router.post('/login/google', validate(loginGoogleSchema), AuthController.loginGoogle);
 router.get('/profile', authenticate.user, AuthController.getProfile);
 // router.post('/verification/email/send', [
@@ -93,4 +71,3 @@ router.get(
 );
 
 export default router;
-

@@ -1,13 +1,13 @@
-import { es2021, node } from 'globals';
-import { configs } from '@eslint/js';
-import { configs as _configs, parser as _parser, plugin } from 'typescript-eslint';
-import prettier from 'eslint-config-prettier';
-import standard from 'eslint-config-standard';
-import { FlatCompat } from '@eslint/eslintrc';
+const { es2021, node } = require('globals');
+const { configs } = require('@eslint/js');
+const { configs: _configs, parser: _parser, plugin } = require('typescript-eslint');
+const prettier = require('eslint-config-prettier');
+const standard = require('eslint-config-standard');
+const { FlatCompat } = require('@eslint/eslintrc');
 
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
-export default [
+module.exports = [
   ...compat.config(standard),
   configs.recommended,
   ..._configs.recommended,
