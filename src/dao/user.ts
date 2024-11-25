@@ -50,7 +50,7 @@ const UserDao = {
   },
   async getOne(args: any, options?: { returnPassword: boolean }) {
     if (args._id && !isValidObjectId(args._id)) return null;
-    const builder = User.findOne(args).select('-_id -__v -createdAt -updatedAt');
+    const builder = User.findOne(args).select('-__v -createdAt -updatedAt');
     if (options?.returnPassword) builder.select('+password');
     return builder;
   },

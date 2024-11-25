@@ -19,8 +19,6 @@ const schema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: false,
-      unique: true,
       sparse: true,
       trim: true,
     },
@@ -31,11 +29,9 @@ const schema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     isAdmin: {
       type: Boolean,
-      required: true,
       default: false,
     },
   },

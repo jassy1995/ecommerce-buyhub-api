@@ -6,8 +6,8 @@ const signUpBody = yup.object({
   email: yup.string().email().required(),
   phone: yup.string().required(),
   image: yup.string().optional(),
-  password: yup.string().min(8).required(),
-  isAdmin: yup.boolean().required(),
+  password: yup.string().min(4).required(),
+  isAdmin: yup.boolean().default(false),
 });
 
 export const signUpSchema = yup.object({
@@ -17,14 +17,16 @@ export const signUpSchema = yup.object({
 export const loginSchema = yup.object({
   body: yup.object({
     email: yup.string().email().required(),
-    password: yup.string().min(8).required(),
+    password: yup.string().min(4).required(),
     remember: yup.boolean().default(false),
   }),
 });
 
 export const loginGoogleSchema = yup.object({
   body: yup.object({
-    token: yup.string().required(),
+    name: yup.string().required(),
+    email: yup.string().email().required(),
+    image: yup.string().optional(),
   }),
 });
 

@@ -21,7 +21,7 @@ router.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   logger.error(err.stack);
   res.status(500).json({
     success: false,
-    message: 'Something went wrong, kindly contact support if the problem persists',
+    message: 'Something went wrong, kindly contact support if the problem persistseee',
   });
 });
 
