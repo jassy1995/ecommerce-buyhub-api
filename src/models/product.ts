@@ -1,14 +1,21 @@
 import logger from '../lib/logger';
-import Review from './review';
-import Size from './size';
 import mongoose from 'mongoose';
+
+const sizeSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true },
+    shortName: { type: String, required: true },
+  },
+  {
+    timestamps: false,
+  }
+);
 
 const schema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     slug: {
       type: String,
@@ -49,12 +56,11 @@ const schema = new mongoose.Schema(
     image_id: {
       type: String,
     },
-    sizes: [Size],
+    sizes: [sizeSchema],
     style: {
       type: String,
       required: true,
     },
-    reviews: [Review],
   },
   {
     timestamps: true,

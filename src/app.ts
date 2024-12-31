@@ -5,7 +5,7 @@ import logger from './lib/logger';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import 'dotenv/config';
-import { createServer } from 'http';
+/* import { createServer } from 'http'; */
 // import { Server } from 'socket.io';
 // import socket from './controllers/socket';
 import helmet from 'helmet';
@@ -26,8 +26,8 @@ if (!process.env.PORT) {
 }
 
 const app = express();
-const server = createServer(app);
-// const io = new Server(server, {
+// const server = createServer(app);
+//  const io = new Server(server, {
 //   cors: { origin: '*' },
 // });
 
@@ -94,4 +94,3 @@ app.listen(PORT, () => {
 
 // process.on('SIGTERM', relax);
 // process.on('SIGINT', relax);
-

@@ -1,6 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 import auth from './auth';
 import user from './user';
+import product from './product';
+import review from './review';
 import logger from '../lib/logger';
 
 const router = express.Router();
@@ -11,6 +13,8 @@ router.get('/', (_req, res) => {
 
 router.use('/api/auth', auth);
 router.use('/api/users', user);
+router.use('/api/products', product);
+router.use('/api/reviews', review);
 
 router.use((_req, res) => {
   return res.status(404).json({ success: false, message: 'Route does not exist' });
@@ -21,7 +25,8 @@ router.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   logger.error(err.stack);
   res.status(500).json({
     success: false,
-    message: 'Something went wrong, kindly contact support if the problem persistseee',
+    message: 'Something went wrong, kindly contact support if the problem persists',
+    error: err,
   });
 });
 

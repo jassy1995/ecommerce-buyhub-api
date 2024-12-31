@@ -13,7 +13,12 @@ const createSampleDocumentBody = yup.object({
   category: yup.string().lowercase().trim().required(),
   comment: yup.string().trim().required(),
 });
-
 export const createSampleDocumentSchema = yup.object({
   body: createSampleDocumentBody,
+});
+
+export const getProductByIdSchema = yup.object({
+  params: yup.object({
+    productId: yup.string().required(),
+  }),
 });
