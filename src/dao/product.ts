@@ -301,6 +301,162 @@ const ProductDao = {
       },
     ]);
   },
+  async getFilterableOption() {
+    const result = await Product.aggregate([
+      {
+        $facet: {
+          categories: [{ $group: { _id: '$category' } }],
+          styles: [{ $group: { _id: '$style' } }],
+          brands: [{ $group: { _id: '$brand' } }],
+          price: [
+            {
+              $group: {
+                _id: null,
+                max: { $max: '$price' },
+                min: { $min: '$price' },
+              },
+            },
+            {
+              $project: { _id: 0, max: 1, min: 1 },
+            },
+          ],
+        },
+      },
+    ]);
+
+    const [data] = result;
+    return {
+      categories: data.categories.map((category: any) => category._id),
+      styles: data.styles.map((style: any) => style._id),
+      brand: data.brands.map((brand: any) => brand._id),
+      price: data.price[0] || { max: null, min: null },
+    };
+  },
+  /* async getSearchProducts(args: any) {
+    const {
+      pageSize = 1,
+      page = 1,
+      category = "",
+      brand = "",
+      style = "",
+      price = "",
+      rating = "",
+      order = "",
+      query: searchQuery = "",
+    } = args;
+
+    const matchFilter = {
+      ...(searchQuery && searchQuery !== "all" && { name: { $regex: searchQuery, $options: "i" } }),
+      ...(category && category !== "any" && { category }),
+      ...(brand && brand !== "any" && { brand }),
+      ...(style && style !== "any" && { style }),
+      ...(rating && rating !== "any" && { rating: { $gte: Number(rating) } }),
+      ...(price && price !== "any" && price.includes("-") && {
+        price: {
+          $gte: Number(price.split("-")[0]),
+          $lte: Number(price.split("-")[1]),
+        },
+      }),
+    };
+
+    const sortOrder: any =
+      order === "lowest"
+        ? { price: 1 }
+        : order === "highest"
+          ? { price: -1 }
+          : order === "toprated"
+            ? { rating: -1 }
+            : order === "newest"
+              ? { createdAt: -1 }
+              : { _id: 1 };
+
+    if (page > 1) {
+      const skipCount = (page - 1) * pageSize;
+      const productsToSkip = await Product.find(matchFilter)
+        .sort(sortOrder)
+        .limit(skipCount)
+        .select("_id");
+
+      if (productsToSkip.length > 0) {
+        matchFilter._id = { $gt: productsToSkip[productsToSkip.length - 1]._id };
+      }
+    }
+    const products = await Product.find(matchFilter)
+      .sort(sortOrder)
+      .limit(pageSize);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {_id, ...countParams} = matchFilter;
+
+    const countProducts = await Product.countDocuments(page > 1 ? countParams : matchFilter);
+    const pages = Math.ceil(countProducts / pageSize)
+
+    return {
+      products,
+      hasNextPage: page < pages,
+      pages,
+    };
+  } */
+
+  async getSearchProducts(args: any) {
+    const {
+      pageSize = 10,
+      page = 1,
+      cursor: lastId = null,
+      category = '',
+      brand = '',
+      style = '',
+      price = '',
+      rating = '',
+      order = '',
+      query: searchQuery = '',
+    } = args;
+
+    const parsedRating = Number(rating);
+    const priceRange = price.includes('-') ? price.split('-').map(Number) : null;
+
+    const matchFilter: any = {
+      ...(searchQuery && searchQuery !== 'all' && { name: { $regex: searchQuery, $options: 'i' } }),
+      ...(category && category !== 'any' && { category }),
+      ...(brand && brand !== 'any' && { brand }),
+      ...(style && style !== 'any' && { style }),
+      ...(parsedRating && !isNaN(parsedRating) && { rating: { $gte: parsedRating } }),
+      ...(priceRange &&
+        priceRange.length === 2 && {
+          price: { $gte: priceRange[0], $lte: priceRange[1] },
+        }),
+    };
+
+    const sortOrder: any =
+      order === 'lowest'
+        ? { price: 1 }
+        : order === 'highest'
+          ? { price: -1 }
+          : order === 'toprated'
+            ? { rating: -1 }
+            : order === 'newest'
+              ? { createdAt: -1 }
+              : { _id: 1 };
+
+    if (page > 1 && lastId) {
+      matchFilter._id = { $gt: lastId };
+    }
+
+    const products = await Product.find(matchFilter).sort(sortOrder).limit(pageSize);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, ...countParams } = matchFilter;
+    const countProducts = await Product.countDocuments(page > 1 ? countParams : matchFilter);
+    const pages = Math.ceil(countProducts / pageSize);
+
+    return {
+      products,
+      hasNextPage: page < pages,
+      pages,
+      total: countProducts,
+      cursor: products.length ? products[products.length - 1]._id : null,
+    };
+  },
 };
 
 export default ProductDao;

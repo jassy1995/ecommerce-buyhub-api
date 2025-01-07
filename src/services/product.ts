@@ -16,6 +16,12 @@ const ProductService = {
   async getProductsByName(args: any) {
     return ProductDao.getProductsByName(args);
   },
+  async getFilterableOption() {
+    return ProductDao.getFilterableOption();
+  },
+  async getSearchProducts(args: any) {
+    return ProductDao.getSearchProducts(args);
+  },
 };
 
 export default ProductService;

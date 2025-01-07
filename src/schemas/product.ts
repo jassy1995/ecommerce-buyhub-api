@@ -17,6 +17,12 @@ export const createSampleDocumentSchema = yup.object({
   body: createSampleDocumentBody,
 });
 
+export const getSearchProduct = yup.object({
+  body: yup.object({
+    params: yup.object().required("params is required! Add 'params' in body"),
+  }),
+});
+
 export const getProductByIdSchema = yup.object({
   params: yup.object({
     productId: yup.string().required(),
